@@ -15,6 +15,8 @@ From: ubuntu
     export HOME
     PATH="/usr/local/conda/bin:/container/pypy3.6-v7.3.3-linux64/bin:$PATH"
     export PATH
+    DEBIAN_FRONTEND=noninteractive
+    export DEBIAN_FRONTEND
 
 
 %labels
@@ -24,6 +26,9 @@ From: ubuntu
 
 %post
 
+    ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime
+    apt-get update && apt-get install -y tzdata
+    dpkg-reconfigure --frontend noninteractive tzdata
     apt-get update && apt-get -y install python3 git wget opam m4 libcairo2-dev libzmq3-dev swig graphviz
 
     mkdir /container
