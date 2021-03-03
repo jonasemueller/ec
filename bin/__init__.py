@@ -34,6 +34,7 @@ import sys
 from bin import analyzeDepth
 from bin import compiledDriver
 from bin import examineFrontier
+from bin import gameTheory
 from bin import graphs
 from bin import launch
 from bin import logReports
@@ -51,6 +52,7 @@ sys.modules['compressionGraph'] = compressionGraph
 sys.modules['evolution'] = evolution
 sys.modules['examineFrontier'] = examineFrontier
 sys.modules['extractDeepcoderDataset'] = extractDeepcoderDataset
+sys.modules['gameTheory'] = gameTheory
 sys.modules['graphs'] = graphs
 sys.modules['launch'] = launch
 sys.modules['logReports'] = logReports
