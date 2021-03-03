@@ -40,6 +40,7 @@ from bin import logReports
 from bin import physics
 from bin import rational
 from bin import scientificLaws
+from bin import scientificLawsMinimal
 from bin import symmetryBreaking
 from bin import taskRankGraphs
 from bin.deprecated import compressionGraph, evolution, extractDeepcoderDataset, python_server, symbolicRegression
@@ -57,6 +58,7 @@ sys.modules['physics'] = physics
 sys.modules['python_server'] = python_server
 sys.modules['rational'] = rational
 sys.modules['scientificLaws'] = scientificLaws
+sys.modules['scientificLawsMinimal'] = scientificLawsMinimal
 sys.modules['symbolicRegression'] = symbolicRegression
 sys.modules['symmetryBreaking'] = symmetryBreaking
 sys.modules['taskRankGraphs'] = taskRankGraphs
