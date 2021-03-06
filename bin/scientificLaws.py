@@ -1,3 +1,5 @@
+import datetime
+import os
 from functools import reduce
 
 try:
@@ -403,8 +405,12 @@ if __name__ == "__main__":
 
     eprint("Got %d equation discovery tasks..." % len(tasks))
 
+    timestamp = datetime.datetime.now().isoformat()
+    outputDirectory = "experimentOutputs/scientificLaws/%s"%timestamp
+    os.system("mkdir -p %s"%outputDirectory)
+
     explorationCompression(baseGrammar, tasks,
-                           outputPrefix="experimentOutputs/scientificLaws",
+                           outputPrefix="%s/scientificLaws"%outputDirectory,
                            evaluationTimeout=0.1,
                            testingTasks=[],
                            **commandlineArguments(
