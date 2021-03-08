@@ -62,7 +62,7 @@ def makeTrainingData(request, law,
 
 def makeTask(name, request, law,
              # Number of examples
-             N=20,
+             N=50,
              # Vector dimensionality
              D=3,
              # Maximum absolute value of a random number
