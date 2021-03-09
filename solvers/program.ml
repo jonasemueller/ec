@@ -472,12 +472,14 @@ let primitive_reducei = primitive "reducei" ((tint @> t1 @> t0 @> t1) @> t1 @> (
 let primitive_filter = primitive "filter" ((t0 @> tboolean) @> (tlist t0) @> (tlist t0)) (fun f l -> List.filter ~f:f l);;
 let primitive_filter_int = primitive "filter_int" ((tint @> tboolean) @> (tlist tint) @> (tlist tint)) (fun f l -> List.filter ~f:f l);;
 let primitive_equal = primitive "eq?" (tint @> tint @> tboolean) (fun (a : int) (b : int) -> a = b);;
+let real_primitive_equal = primitive "eq?." (treal @> treal @> tboolean) (fun (a : int) (b : int) -> a = b);;
 let primitive_equal0 = primitive "eq0" (tint @> tboolean) (fun (a : int) -> a = 0);;
 let primitive_not = primitive "not" (tboolean @> tboolean) (not);;
 let primitive_and = primitive "and" (tboolean @> tboolean @> tboolean) (fun x y -> x && y);;
 let primitive_nand = primitive "nand" (tboolean @> tboolean @> tboolean) (fun x y -> not (x && y));;
 let primitive_or = primitive "or" (tboolean @> tboolean @> tboolean) (fun x y -> x || y);;
 let primitive_greater_than = primitive "gt?" (tint @> tint @> tboolean) (fun (x: int) (y: int) -> x > y);;
+let real_primitive_greater_than = primitive "gt?." (treal @> treal @> tboolean) (fun (x: int) (y: int) -> x > y);;
 
 ignore(primitive "take-word" (tcharacter @> tstring @> tstring) (fun c s ->
     List.take_while s ~f:(fun c' -> not (c = c'))));;

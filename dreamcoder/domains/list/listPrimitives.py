@@ -329,6 +329,10 @@ zip_primitive = Primitive("zip", arrow(tlist(t0), tlist(t1), arrow(t0, t1, t2), 
 def bootstrapTarget():
     """These are the primitives that we hope to learn from the bootstrapping procedure"""
     return [
+        Primitive("true", tbool, True),
+        #Primitive("false", tbool, False),
+        Primitive("not", arrow(tbool, tbool), _not),
+
         # learned primitives
         Primitive("map", arrow(arrow(t0, t1), tlist(t0), tlist(t1)), _map),
         Primitive("unfold", arrow(t0, arrow(t0,tbool), arrow(t0,t1), arrow(t0,t0), tlist(t1)), _unfold),
