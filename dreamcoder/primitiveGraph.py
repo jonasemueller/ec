@@ -177,6 +177,6 @@ def graphPrimitives(result, prefix, view=False):
         
         
 
-    makeGraph(depth2primitives,prefix+'depth.pdf')
-    makeUnorderedGraph(prefix+'unordered.pdf')
+    makeGraph(depth2primitives,prefix+'depth')
+    makeUnorderedGraph(prefix+'unordered')
     #makeGraph(age2primitives,prefix+'iter.pdf')
