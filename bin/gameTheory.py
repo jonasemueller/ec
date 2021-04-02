@@ -24,6 +24,7 @@ from dreamcoder.utilities import eprint, numberOfCPUs
 #treal = baseType("real")
 #tpositive = baseType("positive")
 tposint = baseType("posint")
+tposreal = baseType("posreal")
 tzerotoone = baseType("zerotoone")
 
 def _eq(x): return lambda y: x == y
@@ -41,10 +42,8 @@ def makeTrainingData(request, law,
 
     def sampleArgument(a, listLength):
         if a.name == "real":
-            # Currently, all real samples should be positive
-            #return random() * S * 2 - S
-            return random() * S
-        elif a.name == "positive":
+            return random() * S * 2 - S
+        elif a.name == "posreal":
             return random() * S
         elif a.name == "posint":
             return float(randint(1, S))
@@ -87,7 +86,7 @@ def makeTask(name, request, law,
     def genericType(t):
         if t.name == "real":
             return treal
-        elif t.name == "positive":
+        elif t.name == "posreal":
             return treal
         elif t.name == "int":
             return tint
@@ -144,67 +143,86 @@ def makeTask(name, request, law,
 #       p = program.visit(RandomParameterization.single)
 #       return super(LearnedFeatureExtractor, self).featuresOfProgram(p, tp)
 
+def noInformationUnboundedPolicy(mu, e, n):
+    return mu / (e * n)
+
+def noInformationPolicy(mu, e, n):
+  if mu < e * n:
+      return noInformationUnboundedPolicy(mu, e, n)
+  else:
+      return 1.
+
+def privateInformationUnboundedPolicy(x, mu, e, n):
+    return x / (e * n - e + 1.)
+
+def privateInformationPolicy(x, mu, e, n):
+    if x < e * n - e + 1.:
+        return privateInformationUnboundedPolicy(x, mu, e, n)
+    else:
+        return 1.
+
+def fullInformationUnboundedPolicy(delta, mu, e, n):
+    return delta / e
+
+def fullInformationPolicy(delta, mu, e, n):
+    if delta / e < 1.:
+        return fullInformationUnboundedPolicy(delta, mu, e, n)
+    else:
+        return 1.
 
 if __name__ == "__main__":
-    pi = 3.14  # I think this is close enough to pi
-    # Data taken from:
-    # https://secure-media.collegeboard.org/digitalServices/pdf/ap/ap-physics-1-equations-table.pdf
-    # https://secure-media.collegeboard.org/digitalServices/pdf/ap/physics-c-tables-and-equations-list.pdf
-    # http://mcat.prep101.com/wp-content/uploads/ES_MCATPhysics.pdf
-    # some linear algebra taken from "parallel distributed processing"
     tasks = [
 # Note: Can't send booleans to solver
 
 # Solutions
-        makeTask("1st choice no info",
-                 arrow(treal, tzerotoone, tposint, treal),
-                 lambda mu, e, n: mu / (e * n)),
+#        makeTask("1st choice no info",
+#                 arrow(tposreal, tzerotoone, tposint, tposreal),
+#                 noInfoUnboundedPolicy),
 #        makeTask("choice point no info concept",
-#                 arrow(treal, tzerotoone, tposint, tbool),
+#                 arrow(tposreal, tzerotoone, tposint, tbool),
 #                 lambda mu, e, n: mu < e * n),
-        makeTask("choice concept no info",
-                 arrow(treal, tzerotoone, tposint, treal),
-                 lambda mu, e, n: e * n),
+#        makeTask("choice concept no info",
+#                 arrow(tposreal, tzerotoone, tposint, tposreal),
+#                 lambda mu, e, n: e * n),
 #       makeTask("choice point no info",
-#                arrow(treal, tzerotoone, tposint, treal),
+#                arrow(tposreal, tzerotoone, tposint, tposreal),
 #                lambda mu, e, n: mu < e * n),
-        makeTask("full no info",
-                 arrow(treal, tzerotoone, tposint, treal),
-                 lambda mu, e, n:  mu / (e * n) if mu < e * n else 1.),
-
-        makeTask("1st choice private info",
-                 arrow(treal, treal, tzerotoone, tposint, treal),
-                 lambda x, mu, e, n: x / (e * n - e + 1.)),
-        makeTask("choice concept private info",
-                 arrow(treal, treal, tzerotoone, tposint, treal),
-                 lambda x, mu, e, n: e * n - e + 1.),
+        makeTask("No information policy",
+                 arrow(tposreal, tzerotoone, tposint, tposreal),
+                 noInformationPolicy),
+#        makeTask("1st choice private info",
+#                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
+#                 lambda x, mu, e, n: x / (e * n - e + 1.)),
+#        makeTask("choice concept private info",
+#                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
+#                 lambda x, mu, e, n: e * n - e + 1.),
 #       makeTask("choice point private info",
-#                arrow(treal, treal, tzerotoone, tposint, treal),
+#                arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
 #                lambda x, mu, e, n: x < e * n - e + 1.),
-        makeTask("full private info",
-                 arrow(treal, treal, tzerotoone, tposint, treal),
-                 lambda x, mu, e, n: x / (e * n - e + 1.) if x < e * n - e + 1. else 1.),
+        makeTask("Private information policy",
+                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
+                 privateInformationPolicy),
 
-        makeTask("1st choice public info",
-                 arrow(treal, treal, tzerotoone, tposint, treal),
-                 lambda delta, mu, e, n: delta/e),
+#        makeTask("1st choice public info",
+#                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
+#                 lambda delta, mu, e, n: delta/e),
 #        makeTask("choice point public info",
-#                 arrow(treal, treal, tzerotoone, tposint, treal),
+#                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
 #                 lambda delta, mu, e, n: delta/e < 1.),
-        makeTask("full public info",
-                 arrow(treal, treal, tzerotoone, tposint, treal),
-                 lambda delta, mu, e, n: delta/e if delta/e < 1. else 1. ),
+        makeTask("Public information policy",
+                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
+                 fullInformationPolicy),
 
         # Disaster probabilities
-        makeTask("1st choice public disaster",
-                 arrow(treal, tzerotoone, tposint, treal),
-                 lambda mu, e, n: 1 - mu / (e * (n + 1))),
-        makeTask("2nd choice public disaster", # TODO introduce rand int, can't do power of fraction
-                 arrow(treal, tzerotoone, tposint, treal),
-                 lambda mu, e, n: ((mu - e)**(n+1)) / (e*(n+1)*mu**n) - (mu / (e * (n + 1))) + 1),
-        makeTask("public disaster",
-                 arrow(treal, tzerotoone, tposint, treal),
-                 lambda mu, e, n: 1 - mu / (e * (n + 1)) if mu < e else ((mu - e)**(n+1)) / (e*(n+1)*mu**n) - (mu / (e * (n + 1))) + 1),
+#        makeTask("1st choice public disaster",
+#                 arrow(tposreal, tzerotoone, tposint, tposreal),
+#                 lambda mu, e, n: 1 - mu / (e * (n + 1))),
+#        makeTask("2nd choice public disaster",
+#                 arrow(tposreal, tzerotoone, tposint, tposreal),
+#                 lambda mu, e, n: ((mu - e)**(n+1)) / (e*(n+1)*mu**n) - (mu / (e * (n + 1))) + 1),
+#        makeTask("public disaster",
+#                 arrow(tposreal, tzerotoone, tposint, tposreal),
+#                 lambda mu, e, n: 1 - mu / (e * (n + 1)) if mu < e else ((mu - e)**(n+1)) / (e*(n+1)*mu**n) - (mu / (e * (n + 1))) + 1),
     ]
     #bootstrapTarget()
     #real_gt = Primitive("gt?.", arrow(treal, treal, tbool), _gt)
