@@ -42,7 +42,7 @@ From: ubuntu
     rm ./Miniconda3-latest-Linux-x86_64.sh
     export PATH="/usr/local/conda/bin:$PATH"
 
-    conda install -y  numpy dill pyzmq matplotlib protobuf scikit-learn scipy
+    conda install -y  numpy dill pyzmq matplotlib protobuf scikit-learn scipy pandas
     pip install dill sexpdata pygame pycairo cairocffi psutil pypng Box2D-kengz graphviz frozendict pathos
     
     conda install pytorch torchvision -c pytorch
