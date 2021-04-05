@@ -153,8 +153,7 @@ class DifferentiableTask(Task):
         arguments = {"parameterPenalty": BIC * math.log(len(examples)),
                      "temperature": temperature,
                      "steps": steps, "restarts": restarts, "lr": lr, "decay": decay, "grow": grow,
-                     "maxParameters": maxParameters,
-                     "lossThreshold": -likelihoodThreshold}
+                     "maxParameters": maxParameters}
         if clipLoss is not None: arguments['clipLoss'] = float(clipLoss)
         if clipOutput is not None: arguments['clipOutput'] = float(clipOutput)
         if actualParameters is not None: arguments['actualParameters'] = int(actualParameters)

@@ -103,7 +103,6 @@ def makeTasksFromFile(name, request, filename):
                                         genericType(request),
                                         e,
                                         BIC=10.,
-                                        likelihoodThreshold=-0.001,
                                         restarts=2,
                                         steps=25,
                                         maxParameters=1,
