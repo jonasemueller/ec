@@ -1,5 +1,7 @@
 import datetime
 import os
+import pandas as pd
+import random
 from functools import reduce
         
 try:
@@ -18,11 +20,8 @@ from dreamcoder.program import Program, Primitive
 from dreamcoder.recognition import RecurrentFeatureExtractor, DummyFeatureExtractor
 from dreamcoder.task import DifferentiableTask, squaredErrorLoss
 from dreamcoder.type import tint, treal, tbool, baseType, tlist, arrow
-from dreamcoder.utilities import eprint, numberOfCPUs
+from dreamcoder.utilities import eprint, numberOfCPUs, testTrainSplit
 
-#tvector = baseType("vector")
-#treal = baseType("real")
-#tpositive = baseType("positive")
 tposint = baseType("posint")
 tposreal = baseType("posreal")
 tzerotoone = baseType("zerotoone")
@@ -69,6 +68,47 @@ def makeTrainingData(request, law,
 
     return e
 
+def genericType(t):
+    if t.name == "real":
+        return treal
+    elif t.name == "posreal":
+        return treal
+    elif t.name == "int":
+        return tint
+    elif t.name == "posint":
+        return treal # Because of no int support in solver
+    elif t.name == "zerotoone":
+        return treal
+    elif t.name == "bool":
+        return tbool
+    elif t.name == "vector":
+        return tlist(treal)
+    elif t.name == "list":
+        return tlist(genericType(t.arguments[0]))
+    elif t.isArrow():
+        return arrow(genericType(t.arguments[0]),
+                     genericType(t.arguments[1]))
+    else:
+        assert False, "could not make type generic: %s" % t
+
+def makeTasksFromFile(name, request, filename):
+    data = pd.read_csv(filename)
+    data['a1'] = data['a1'].clip(lower=0.0, upper=1.0)
+    data['a2'] = data['a2'].clip(lower=0.0, upper=1.0)
+    groupedData = data.groupby(['e12'])
+    tasks = []
+    for group, value in groupedData:
+        e = tuple(((f1, f2), a1) for f1, f2, a1 in value[['f1', 'f2', 'a1']].to_numpy())
+        tasks.append(DifferentiableTask("PrRTTP enmity " + str(group),
+                                        genericType(request),
+                                        e,
+                                        BIC=10.,
+                                        likelihoodThreshold=-0.001,
+                                        restarts=2,
+                                        steps=25,
+                                        maxParameters=1,
+                                        loss=squaredErrorLoss))
+    return tasks
 
 def makeTask(name, request, law,
              # Number of examples
@@ -77,34 +117,8 @@ def makeTask(name, request, law,
              D=3,
              # Maximum absolute value of a random number
              S=10.):
-    print(name)
     e = makeTrainingData(request, law,
                          N=N, D=D, S=S)
-    print(e)
-    print()
-
-    def genericType(t):
-        if t.name == "real":
-            return treal
-        elif t.name == "posreal":
-            return treal
-        elif t.name == "int":
-            return tint
-        elif t.name == "posint":
-            return treal # Because of no int support in solver
-        elif t.name == "zerotoone":
-            return treal
-        elif t.name == "bool":
-            return tbool
-        elif t.name == "vector":
-            return tlist(treal)
-        elif t.name == "list":
-            return tlist(genericType(t.arguments[0]))
-        elif t.isArrow():
-            return arrow(genericType(t.arguments[0]),
-                         genericType(t.arguments[1]))
-        else:
-            assert False, "could not make type generic: %s" % t
 
     return DifferentiableTask(name, genericType(request), e,
                               BIC=10.,
@@ -171,7 +185,15 @@ def fullInformationPolicy(delta, mu, e, n):
         return 1.
 
 if __name__ == "__main__":
-    tasks = [
+    tasks = makeTasksFromFile("Test",
+                              arrow(tposreal, tposreal, tposreal),
+                              "prrttp/results_rho20_fmany_df.csv")
+    random.shuffle(tasks)
+    test, train = testTrainSplit(tasks, 10)
+    eprint("Training on", len(train), "tasks")
+    eprint("Testing on", len(test), "tasks")
+
+##    tasks = [
 # Note: Can't send booleans to solver
 
 # Solutions
@@ -187,9 +209,9 @@ if __name__ == "__main__":
 #       makeTask("choice point no info",
 #                arrow(tposreal, tzerotoone, tposint, tposreal),
 #                lambda mu, e, n: mu < e * n),
-        makeTask("No information policy",
-                 arrow(tposreal, tzerotoone, tposint, tposreal),
-                 noInformationPolicy),
+##        makeTask("No information policy",
+##                 arrow(tposreal, tzerotoone, tposint, tposreal),
+##                 noInformationPolicy),
 #        makeTask("1st choice private info",
 #                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
 #                 lambda x, mu, e, n: x / (e * n - e + 1.)),
@@ -199,9 +221,9 @@ if __name__ == "__main__":
 #       makeTask("choice point private info",
 #                arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
 #                lambda x, mu, e, n: x < e * n - e + 1.),
-        makeTask("Private information policy",
-                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
-                 privateInformationPolicy),
+##        makeTask("Private information policy",
+##                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
+##                 privateInformationPolicy),
 
 #        makeTask("1st choice public info",
 #                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
@@ -209,9 +231,9 @@ if __name__ == "__main__":
 #        makeTask("choice point public info",
 #                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
 #                 lambda delta, mu, e, n: delta/e < 1.),
-        makeTask("Public information policy",
-                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
-                 fullInformationPolicy),
+##        makeTask("Public information policy",
+##                 arrow(tposreal, tposreal, tzerotoone, tposint, tposreal),
+##                 fullInformationPolicy),
 
         # Disaster probabilities
 #        makeTask("1st choice public disaster",
@@ -223,7 +245,7 @@ if __name__ == "__main__":
 #        makeTask("public disaster",
 #                 arrow(tposreal, tzerotoone, tposint, tposreal),
 #                 lambda mu, e, n: 1 - mu / (e * (n + 1)) if mu < e else ((mu - e)**(n+1)) / (e*(n+1)*mu**n) - (mu / (e * (n + 1))) + 1),
-    ]
+ ##   ]
     #bootstrapTarget()
     #real_gt = Primitive("gt?.", arrow(treal, treal, tbool), _gt)
     #real_eq =  Primitive("eq?.", arrow(treal, treal, tbool), _eq)
@@ -249,16 +271,16 @@ if __name__ == "__main__":
     baseGrammar = Grammar.uniform(equationPrimitives)
 #    baseGrammar = Grammar.uniform(equationPrimitives + [p for p in bootstrapTarget()])
 
-    eprint("Got %d equation discovery tasks..." % len(tasks))
+#    eprint("Got %d equation discovery tasks..." % len(tasks))
 
     timestamp = datetime.datetime.now().isoformat()
     outputDirectory = "experimentOutputs/gameTheory/%s"%timestamp
     os.system("mkdir -p %s"%outputDirectory)
 
-    explorationCompression(baseGrammar, tasks,
+    explorationCompression(baseGrammar, train,
                            outputPrefix="%s/gameTheory"%outputDirectory,
                            evaluationTimeout=0.1,
-                           testingTasks=[],
+                           testingTasks=test,
                            **commandlineArguments(
                                compressor="ocaml",
                                featureExtractor=DummyFeatureExtractor,
