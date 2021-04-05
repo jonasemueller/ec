@@ -616,6 +616,8 @@ def sleep_recognition(result, grammar, taskBatch, tasks, testingTasks, allFronti
         recognizerTasksHitBottomUp = {f.task for f in bottomupFrontiers if not f.empty}
         totalTasksHitBottomUp.update(recognizerTasksHitBottomUp)
         eprint("Recognizer %d solved %d/%d tasks; total tasks solved is now %d." % (recIndex, len(recognizerTasksHitBottomUp), len(tasks), len(totalTasksHitBottomUp)))
+        with open('task-progress.txt', "a") as f:
+            f.write("Recognizer %d solved %d/%d tasks; total tasks solved is now %d.\n" % (recIndex, len(recognizerTasksHitBottomUp), len(tasks), len(totalTasksHitBottomUp)))
         if len(recognizerTasksHitBottomUp) >= mostTasks:
             # TODO (cathywong): could consider keeping the one that put the highest likelihood on the solved tasks.
             bestRecognizer = recIndex
