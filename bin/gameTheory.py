@@ -188,7 +188,7 @@ if __name__ == "__main__":
                               arrow(tposreal, tposreal, tposreal),
                               "prrttp/results_rho20_fmany_df.csv")
     random.shuffle(tasks)
-    test, train = testTrainSplit(tasks, 10)
+    test, train = testTrainSplit(tasks, 8)
     eprint("Training on", len(train), "tasks")
     eprint("Testing on", len(test), "tasks")
 
