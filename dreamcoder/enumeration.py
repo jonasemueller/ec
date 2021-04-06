@@ -5,6 +5,7 @@ from dreamcoder.utilities import get_root_dir
 import os
 import traceback
 import subprocess
+import tempfile
 
 
 def multicoreEnumeration(g, tasks, _=None,
@@ -295,11 +296,16 @@ def solveForTask_ocaml(_=None,
 
     try:
         solver_file = os.path.join(get_root_dir(), 'solver')
-        process = subprocess.Popen(solver_file,
-                                   stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE)
-        response, error = process.communicate(bytes(message, encoding="utf-8"))
-        response = json.loads(response.decode("utf-8"))
+        with tempfile.NamedTemporaryFile(mode='r+', encoding='utf-8') as infile, tempfile.NamedTemporaryFile(mode='r+', encoding='utf-8') as outfile:
+            infile.write(message)
+            infile.seek(0)
+            process = subprocess.Popen(solver_file,
+                    stdin=infile,
+                    stdout=outfile)
+            process.wait()
+            outfile.seek(0)
+            response = json.load(outfile)
+
     except OSError as exc:
         raise exc
 
