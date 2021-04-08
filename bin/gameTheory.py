@@ -2,6 +2,7 @@ import datetime
 import os
 import pandas as pd
 import random
+import math
 from functools import reduce
         
 try:
@@ -91,23 +92,65 @@ def genericType(t):
     else:
         assert False, "could not make type generic: %s" % t
 
-def makeTasksFromFile(name, request, filename):
+def split(collection, fraction):
+    half = math.floor(len(collection) * fraction)
+    return collection[half:], collection[: half]
+
+def makeTasksFromFile(name, request, filename, seed):
     data = pd.read_csv(filename)
     data['a1'] = data['a1'].clip(lower=0.0, upper=1.0)
     data['a2'] = data['a2'].clip(lower=0.0, upper=1.0)
     groupedData = data.groupby(['e12'])
-    tasks = []
+    testTasks = []
+    trainTasks = []
     for group, value in groupedData:
-        e = tuple(((f1, f2), a1) for f1, f2, a1 in value[['f1', 'f2', 'a1']].to_numpy())
-        tasks.append(DifferentiableTask("PrRTTP enmity " + str(group),
+        e = [((f1, f2), a1) for f1, f2, a1 in value[['f1', 'f2', 'a1']].to_numpy()]
+        random.Random(seed).shuffle(e)
+        test, train = split(tuple(e), 0.5)
+        testTasks.append(DifferentiableTask(name + " enmity " + str(group),
+                                            genericType(request),
+                                            test,
+                                            BIC=1.,
+                                            restarts=2,
+                                            steps=25,
+                                            maxParameters=2,
+                                            loss=squaredErrorLoss))
+        trainTasks.append(DifferentiableTask(name + " enmity " + str(group),
+                                             genericType(request),
+                                             train,
+                                             BIC=1.,
+                                             restarts=2,
+                                             steps=25,
+                                             maxParameters=2,
+                                             loss=squaredErrorLoss))
+    return testTasks, trainTasks
+
+def makeTasksFromFile2(name, request, filename, seed):
+    data = pd.read_csv(filename)
+    data['a1'] = data['a1'].clip(lower=0.0, upper=1.0)
+    data['a2'] = data['a2'].clip(lower=0.0, upper=1.0)
+    testTasks = []
+    trainTasks = []
+    e = [((e12, f1, f2), a1) for e12, f1, f2, a1 in data[['e12', 'f1', 'f2', 'a1']].to_numpy()]
+    random.Random(seed).shuffle(e)
+    test, train = split(tuple(e), 0.1)
+    testTasks.append(DifferentiableTask(name + " w. enmity as parameter ",
                                         genericType(request),
-                                        e,
-                                        BIC=10.,
+                                        test,
+                                        BIC=1.,
                                         restarts=2,
                                         steps=25,
-                                        maxParameters=1,
+                                        maxParameters=3,
                                         loss=squaredErrorLoss))
-    return tasks
+    trainTasks.append(DifferentiableTask(name + " w. enmity as parameter ",
+                                         genericType(request),
+                                         train,
+                                         BIC=1.,
+                                         restarts=2,
+                                         steps=25,
+                                         maxParameters=3,
+                                         loss=squaredErrorLoss))
+    return testTasks, trainTasks
 
 def makeTask(name, request, law,
              # Number of examples
@@ -184,11 +227,17 @@ def fullInformationPolicy(delta, mu, e, n):
         return 1.
 
 if __name__ == "__main__":
-    tasks = makeTasksFromFile("Test",
-                              arrow(tposreal, tposreal, tposreal),
-                              "prrttp/results_rho20_fmany_df.csv")
-    random.shuffle(tasks)
-    test, train = testTrainSplit(tasks, 8)
+    seed = 1234
+    test1, train1 = makeTasksFromFile("PrRTTP",
+                                      arrow(tposreal, tposreal, tposreal),
+                                      "prrttp/results_rho20_fmany_df.csv",
+                                      seed)
+    test2, train2 = makeTasksFromFile2("PrRTTP",
+                                       arrow(tzerotoone, tposreal, tposreal, tposreal),
+                                       "prrttp/results_rho20_fmany_df.csv",
+                                       seed)
+    test = test1 + test2
+    train = train1 + train2
     eprint("Training on", len(train), "tasks")
     eprint("Testing on", len(test), "tasks")
 
