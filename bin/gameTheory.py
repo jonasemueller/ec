@@ -152,6 +152,21 @@ def makeTasksFromFile2(name, request, filename, seed):
                                          loss=squaredErrorLoss))
     return testTasks, trainTasks
 
+def makeTasksFromFile3(name, request, data_transform, filename):
+    data = pd.read_csv(filename)
+    data = data[data.status.eq('Solve_Succeeded')]
+    #print(len(data[data.status.ne('Solve_Succeeded')]))
+    data['a2'] = data['a2'].clip(lower=0.0, upper=1.0)
+    data['a1'] = data['a1'].clip(lower=0.0, upper=1.0)
+    return DifferentiableTask(name,
+                              genericType(request),
+                              data_transform(data),
+                              BIC=1.,
+                              restarts=2,
+                              steps=25,
+                              maxParameters=5,
+                              loss=squaredErrorLoss)
+
 def makeTask(name, request, law,
              # Number of examples
              N=50,
@@ -169,7 +184,6 @@ def makeTask(name, request, law,
                               steps=25,
                               maxParameters=1,
                               loss=squaredErrorLoss)
-
 
 #class LearnedFeatureExtractor(RecurrentFeatureExtractor):
 #   def tokenize(self, examples):
@@ -227,19 +241,93 @@ def fullInformationPolicy(delta, mu, e, n):
         return 1.
 
 if __name__ == "__main__":
-    seed = 1234
-    test1, train1 = makeTasksFromFile("PrRTTP",
-                                      arrow(tposreal, tposreal, tposreal),
-                                      "prrttp/results_rho20_fmany_df.csv",
-                                      seed)
-    test2, train2 = makeTasksFromFile2("PrRTTP",
-                                       arrow(tzerotoone, tposreal, tposreal, tposreal),
-                                       "prrttp/results_rho20_fmany_df.csv",
-                                       seed)
-    test = test1 + test2
-    train = train1 + train2
-    eprint("Training on", len(train), "tasks")
-    eprint("Testing on", len(test), "tasks")
+
+    test = []
+    train = []
+
+    # Task 1
+    test.append(makeTasksFromFile3("PrRTTP task 1 testing",
+                                   arrow(tposreal, tposreal, tposreal, tposreal),
+                                   lambda data : [((e12, f1, f2), a1) for e12, f1, f2, a1 in data[['e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                   'prrttp/simulations/task1-test.csv'))
+    train.append(makeTasksFromFile3("PrRTTP task 1 train",
+                                    arrow(tposreal, tposreal, tposreal, tposreal),
+                                    lambda data : [((e12, f1, f2), a1) for e12, f1, f2, a1 in data[['e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                    'prrttp/simulations/task1-train.csv'))
+
+    # Task 2
+    test.append(makeTasksFromFile3("PrRTTP task 2 testing",
+                                   arrow(tposreal, tposreal, tposreal, tposreal),
+                                   lambda data : [((ρ, f1, f2), a1) for ρ, f1, f2, a1 in data[['ρ', 'f1', 'f2', 'a1']].to_numpy()],
+                                   'prrttp/simulations/task2-test.csv'))
+    train.append(makeTasksFromFile3("PrRTTP task 2 train",
+                                    arrow(tposreal, tposreal, tposreal, tposreal),
+                                    lambda data : [((ρ, f1, f2), a1) for ρ, f1, f2, a1 in data[['ρ', 'f1', 'f2', 'a1']].to_numpy()],
+                                    'prrttp/simulations/task2-train.csv'))
+
+    # Task 3
+    test.append(makeTasksFromFile3("PrRTTP task 3 testing",
+                                   arrow(tposreal, tposreal, tposreal, tposreal),
+                                   lambda data : [((q, f1, f2), a1) for q, f1, f2, a1 in data[['q', 'f1', 'f2', 'a1']].to_numpy()],
+                                   'prrttp/simulations/task3-test.csv'))
+    train.append(makeTasksFromFile3("PrRTTP task 3 train",
+                                    arrow(tposreal, tposreal, tposreal, tposreal),
+                                    lambda data : [((q, f1, f2), a1) for q, f1, f2, a1 in data[['q', 'f1', 'f2', 'a1']].to_numpy()],
+                                    'prrttp/simulations/task3-train.csv'))
+
+    # Task 4
+    test.append(makeTasksFromFile3("PrRTTP task 4 testing",
+                                   arrow(tposreal, tposreal, tposreal, tposreal, tposreal),
+                                   lambda data : [((ρ, e12, f1, f2), a1) for ρ, e12, f1, f2, a1 in data[['ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                   'prrttp/simulations/task4-test.csv'))
+    train.append(makeTasksFromFile3("PrRTTP task 4 train",
+                                    arrow(tposreal, tposreal, tposreal, tposreal, tposreal),
+                                    lambda data : [((ρ, e12, f1, f2), a1) for ρ, e12, f1, f2, a1 in data[['ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                    'prrttp/simulations/task4-train.csv'))
+
+    # Task 5
+    test.append(makeTasksFromFile3("PrRTTP task 5 testing",
+                                   arrow(tposreal, tposreal, tposreal, tposreal, tposreal),
+                                   lambda data : [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in data[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                   'prrttp/simulations/task5-test.csv'))
+    train.append(makeTasksFromFile3("PrRTTP task 5 train",
+                                    arrow(tposreal, tposreal, tposreal, tposreal, tposreal),
+                                    lambda data : [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in data[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                    'prrttp/simulations/task5-train.csv'))
+
+    # Task 6
+    test.append(makeTasksFromFile3("PrRTTP task 6 testing",
+                                   arrow(tposreal, tposreal, tposreal, tposreal, tposreal),
+                                   lambda data : [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in data[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()],
+                                   'prrttp/simulations/task6-test.csv'))
+    train.append(makeTasksFromFile3("PrRTTP task 6 train",
+                                    arrow(tposreal, tposreal, tposreal, tposreal, tposreal),
+                                    lambda data : [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in data[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()],
+                                    'prrttp/simulations/task6-train.csv'))
+
+    # Task 7
+    test.append(makeTasksFromFile3("PrRTTP task 7 testing",
+                                   arrow(tposreal, tposreal, tposreal, tposreal, tposreal, tposreal),
+                                   lambda data : [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in data[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                   'prrttp/simulations/task7-test.csv'))
+    train.append(makeTasksFromFile3("PrRTTP task 7 train",
+                                    arrow(tposreal, tposreal, tposreal, tposreal, tposreal, tposreal),
+                                    lambda data : [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in data[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
+                                    'prrttp/simulations/task7-train.csv'))
+
+#    seed = 1234
+#    test1, train1 = makeTasksFromFile("PrRTTP",
+#                                      arrow(tposreal, tposreal, tposreal),
+#                                      "prrttp/results_rho20_fmany_df.csv",
+#                                      seed)
+#    test2, train2 = makeTasksFromFile2("PrRTTP",
+#                                       arrow(tzerotoone, tposreal, tposreal, tposreal),
+#                                       "prrttp/results_rho20_fmany_df.csv",
+#                                       seed)
+#    test = test1 + test2
+#    train = train1 + train2
+#    eprint("Training on", len(train), "tasks")
+#    eprint("Testing on", len(test), "tasks")
 
 ##    tasks = [
 # Note: Can't send booleans to solver
@@ -325,7 +413,8 @@ if __name__ == "__main__":
     outputDirectory = "experimentOutputs/gameTheory/%s"%timestamp
     os.system("mkdir -p %s"%outputDirectory)
 
-    explorationCompression(baseGrammar, train,
+    explorationCompression(baseGrammar,
+                           train,
                            outputPrefix="%s/gameTheory"%outputDirectory,
                            evaluationTimeout=0.1,
                            testingTasks=test,
