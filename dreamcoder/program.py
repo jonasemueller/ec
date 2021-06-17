@@ -1065,7 +1065,7 @@ class PrettyVisitor(object):
                 child = child.body
             body = child.visit(self, newVariables + environment,
                                False, True)
-            body = "(λ (%s) %s)"%(" ".join(reversed(newVariables)), body)
+            body = "(fn [%s] %s)"%(" ".join(reversed(newVariables)), body)
             return body
             
             

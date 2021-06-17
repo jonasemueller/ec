@@ -12,14 +12,21 @@ def graphPrimitives(result, prefix, view=False):
                    for g in result.grammars
                    for p in g.primitives
                    if p.isInvented }
-    age = {p: min(j for j,g in enumerate(result.grammars) if p in g.primitives) + 1
-           for p in primitives }
+    taskSolutionPrograms = { solution.bestPosterior.program
+                             for solution in list(result.taskSolutions.values()) }
+    taskSolutionNames = [ solution.task.name
+                          for solution in list(result.taskSolutions.values()) ]
+    taskSolutions = {solution.task.name:solution.bestPosterior.program
+                     for solution in list(result.taskSolutions.values())}
+    #dict(zip(taskSolutionNames, taskSolutionPrograms))
+#    primitives = primitives.union(taskSolutions)
+#    age = {p: min(j for j,g in enumerate(result.grammars) if p in g.primitives) + 1
+#           for p in primitives }
 
 
-
-    ages = set(age.values())
-    age2primitives = {a: {p for p,ap in age.items() if a == ap }
-                      for a in ages}
+#    ages = set(age.values())
+#    age2primitives = {a: {p for p,ap in age.items() if a == ap }
+#                      for a in ages}
 
     def lb(s,T=20):
         s = s.split()
@@ -34,6 +41,11 @@ def graphPrimitives(result, prefix, view=False):
         return " ".join(l)
 
     nameSimplification = {
+        "+.": "+",
+        "-.": "-",
+        "*.": "*",
+        "/.": "/",
+        "pi": "Math/PI",
         "fix1": 'Y',
         "tower_loopM": "for",
         "tower_embed": "get/set",
@@ -59,6 +71,7 @@ def graphPrimitives(result, prefix, view=False):
                 
     name = {}
     simplification = {}
+    taskSimplification = {}
     depth = {}
     def getName(p):
         if p in name: return name[p]
@@ -72,12 +85,29 @@ def graphPrimitives(result, prefix, view=False):
             simplification_ = simplification_.substitute(Primitive(original,None,None),
                                                          Primitive(simplified,None,None))
         name[p] = "f%d"%len(name)
-        simplification[p] = name[p] + '=' + lb(prettyProgram(simplification_, Lisp=True))
+        simplification[p] = '(defcurry ' + name[p] + ' ' + prettyProgram(simplification_, Lisp=True) + ')'
         depth[p] = 1 + max([depth[k] for k in children] + [0])
         return name[p]
 
+    def getTaskSolutionName(name, program):
+        children = {k: getName(k)
+                    for _,k in program.body.walk()
+                    if k.isInvented}
+        taskSimplification_ = program # p.body would remove the outer parameter
+        for k,childName in children.items():
+            taskSimplification_ = taskSimplification_.substitute(k, Primitive(childName,None,None))
+        for original, simplified in nameSimplification.items():
+            taskSimplification_ = taskSimplification_.substitute(Primitive(original,None,None),
+                                                         Primitive(simplified,None,None))
+        taskSimplification[name] = '(def ' + name + ' ' + prettyProgram(taskSimplification_, Lisp=True) + ')'
+        depth[program] = 1 + max([depth[k] for k in children] + [0])
+        return name
+
+
     for p in primitives:
         getName(p)
+    for n, s in taskSolutions.items():
+        getTaskSolutionName(n, s)
 
     depths = {depth[p] for p in primitives}
     depth2primitives = {d: {p for p in primitives if depth[p] == d }
@@ -127,6 +157,16 @@ def graphPrimitives(result, prefix, view=False):
                         if k.isInvented}
             for k in children:
                 g.edge(name[k],name[p])
+        for n, s in taskSolutions.items():
+            g.node(getTaskSolutionName(n, s),
+                   label="<%s>"%taskSimplification[n])
+        for n, s in taskSolutions.items():
+            children = {k
+                        for _,k in s.body.walk()
+                        if k.isInvented}
+            for k in children:
+                g.edge(name[k],n)
+
         try:
             g.render(fn,view=view)
             eprint("Exported primitive graph to",fn)
@@ -174,9 +214,19 @@ def graphPrimitives(result, prefix, view=False):
         except Exception as e:
             eprint("Got some kind of error while trying to render primitive graph! Did you install graphviz/dot?")
             print(e)
-        
-        
 
+    def writeCode(filename):
+        simplifiedPrimitives = [simplification[p] for p in primitives]
+        with open(filename, "w") as f:
+            for p in sorted(simplifiedPrimitives):
+                f.write(p)
+                f.write('\n')
+            f.write('\n')
+            for n, s in taskSolutions.items():
+                f.write(taskSimplification[n])
+                f.write('\n')
+
+    writeCode(prefix+'code.clj')
     makeGraph(depth2primitives,prefix+'depth')
     makeUnorderedGraph(prefix+'unordered')
     #makeGraph(age2primitives,prefix+'iter.pdf')
