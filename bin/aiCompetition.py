@@ -51,91 +51,91 @@ if __name__ == "__main__":
     test.append(makeTasksFromFile("task1-test",
                                    arrow(treal, treal),
                                    lambda data : [((f1,), a1) for f1, a1 in data[['f1', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task1-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task1-test.csv'))
     train.append(makeTasksFromFile("task1-train",
                                     arrow(treal, treal),
                                     lambda data : [((f1,), a1) for f1, a1 in data[['f1', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task1-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task1-train.csv'))
 
     # Task 2
     test.append(makeTasksFromFile("task2-test",
                                    arrow(treal, treal, treal),
                                    lambda data : [((f1, f2), a1) for f1, f2, a1 in data[['f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task2-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task2-test.csv'))
     train.append(makeTasksFromFile("task2-train",
                                     arrow(treal, treal, treal),
                                     lambda data : [((f1, f2), a1) for f1, f2, a1 in data[['f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task2-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task2-train.csv'))
 
     # Task 3
     test.append(makeTasksFromFile("task3-test",
                                    arrow(treal, treal, treal, treal),
                                    lambda data : [((e12, f1, f2), a1) for e12, f1, f2, a1 in data[['e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task3-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task3-test.csv'))
     train.append(makeTasksFromFile("task3-train",
                                     arrow(treal, treal, treal, treal),
                                     lambda data : [((e12, f1, f2), a1) for e12, f1, f2, a1 in data[['e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task3-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task3-train.csv'))
 
     # Task 4
     test.append(makeTasksFromFile("task4-test",
                                    arrow(treal, treal, treal, treal),
                                    lambda data : [((ρ, f1, f2), a1) for ρ, f1, f2, a1 in data[['ρ', 'f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task4-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task4-test.csv'))
     train.append(makeTasksFromFile("task4-train",
                                     arrow(treal, treal, treal, treal),
                                     lambda data : [((ρ, f1, f2), a1) for ρ, f1, f2, a1 in data[['ρ', 'f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task4-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task4-train.csv'))
 
     # Task 5
     test.append(makeTasksFromFile("task5-test",
                                    arrow(treal, treal, treal, treal),
                                    lambda data : [((q, f1, f2), a1) for q, f1, f2, a1 in data[['q', 'f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task5-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task5-test.csv'))
     train.append(makeTasksFromFile("task5-train",
                                     arrow(treal, treal, treal, treal),
                                     lambda data : [((q, f1, f2), a1) for q, f1, f2, a1 in data[['q', 'f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task5-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task5-train.csv'))
 
     # Task 6
     test.append(makeTasksFromFile("task6-test",
                                    arrow(treal, treal, treal, treal, treal),
                                    lambda data : [((ρ, e12, f1, f2), a1) for ρ, e12, f1, f2, a1 in data[['ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task6-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task6-test.csv'))
     train.append(makeTasksFromFile("task6-train",
                                     arrow(treal, treal, treal, treal, treal),
                                     lambda data : [((ρ, e12, f1, f2), a1) for ρ, e12, f1, f2, a1 in data[['ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task6-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task6-train.csv'))
 
     # Task 7
     test.append(makeTasksFromFile("task7-test",
                                    arrow(treal, treal, treal, treal, treal),
                                    lambda data : [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in data[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task7-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task7-test.csv'))
     train.append(makeTasksFromFile("task7-train",
                                     arrow(treal, treal, treal, treal, treal),
                                     lambda data : [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in data[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task7-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task7-train.csv'))
 
     # Task 8
     test.append(makeTasksFromFile("task8-test",
                                    arrow(treal, treal, treal, treal, treal),
                                    lambda data : [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in data[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task8-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task8-test.csv'))
     train.append(makeTasksFromFile("task8-train",
                                     arrow(treal, treal, treal, treal, treal),
                                     lambda data : [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in data[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task8-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task8-train.csv'))
 
     # Task 9
     test.append(makeTasksFromFile("task9-test",
                                    arrow(treal, treal, treal, treal, treal, treal),
                                    lambda data : [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in data[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                   'prrttp/simulations/task9-test.csv'))
+                                   'data/aiCompetition/aiCompetitionTasks/task9-test.csv'))
     train.append(makeTasksFromFile("task9-train",
                                     arrow(treal, treal, treal, treal, treal, treal),
                                     lambda data : [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in data[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()],
-                                    'prrttp/simulations/task9-train.csv'))
+                                    'data/aiCompetition/aiCompetitionTasks/task9-train.csv'))
 
     equationPrimitives = [
         # Possibly add individual ints
@@ -164,12 +164,12 @@ if __name__ == "__main__":
     #eprint("Got %d equation discovery tasks..." % len(tasks))
 
     timestamp = datetime.datetime.now().isoformat()
-    outputDirectory = "experimentOutputs/gameTheory/%s"%timestamp
+    outputDirectory = "experimentOutputs/aiCompetition/%s"%timestamp
     os.system("mkdir -p %s"%outputDirectory)
 
     explorationCompression(baseGrammar,
                            train,
-                           outputPrefix="%s/gameTheory"%outputDirectory,
+                           outputPrefix="%s/aiCompetition"%outputDirectory,
                            evaluationTimeout=0.1,
                            testingTasks=test,
                            **commandlineArguments(
