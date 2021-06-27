@@ -700,8 +700,10 @@ class RecognitionModel(nn.Module):
             return u
         u = uses(ls)
         u[u > 1.] = 1.
-        if self.use_cuda: u = u.cuda()
-        al = self._auxiliaryLoss(self._auxiliaryPrediction(features), u)
+        al = self._auxiliaryLoss(maybe_cuda(self._auxiliaryPrediction(maybe_cuda(features,
+                                                                                 self.use_cuda)),
+                                            self.use_cuda),
+                                 maybe_cuda(u, self.use_cuda))
         return al
             
     def taskEmbeddings(self, tasks):
@@ -711,7 +713,7 @@ class RecognitionModel(nn.Module):
     def forward(self, features):
         """returns either a Grammar or a ContextualGrammar
         Takes as input the output of featureExtractor.featuresOfTask"""
-        features = self._MLP(features)
+        features = self._MLP(maybe_cuda(features, self.use_cuda))
         return self.grammarBuilder(features)
 
     def auxiliaryPrimitiveEmbeddings(self):
@@ -738,7 +740,7 @@ class RecognitionModel(nn.Module):
             # return features
             return self.noParent[1](features)
         else:
-            features = self._MLP(features)
+            features = self._MLP(maybe_cuda(features, self.use_cuda))
 
         if self.contextual:
             if hasattr(self.grammarBuilder, 'variableParent'):
@@ -797,7 +799,7 @@ class RecognitionModel(nn.Module):
                 for g in [self.grammarOfTask(task).untorch().noParent] }
 
     def taskHiddenStates(self, tasks):
-        return {task: self._MLP(self.featureExtractor.featuresOfTask(task)).view(-1).data.cpu().numpy()
+        return {task: self._MLP(maybe_cuda(self.featureExtractor.featuresOfTask(task), self.use_cuda)).view(-1).data.cpu().numpy()
                 for task in tasks}
 
     def taskGrammarEntropies(self, tasks):
@@ -817,7 +819,7 @@ class RecognitionModel(nn.Module):
             g = self(features)
             return - entry.program.logLikelihood(g), al
         else:
-            features = self._MLP(features).unsqueeze(0)
+            features = self._MLP(maybe_cuda(features, self.use_cuda)).unsqueeze(0)
             
             ll = self.grammarBuilder.batchedLogLikelihoods(features, [entry.program]).view(-1)
             return -ll, al
@@ -839,7 +841,7 @@ class RecognitionModel(nn.Module):
         features = self.featureExtractor.featuresOfTask(frontier.task)
         if features is None: return None, None
         al = self.auxiliaryLoss(frontier, features if auxiliary else features.detach())
-        features = self._MLP(features)
+        features = self._MLP(maybe_cuda(features, self.use_cuda))
         features = features.expand(batchSize, features.size(-1))  # TODO
         lls = self.grammarBuilder.batchedLogLikelihoods(features, [entry.program for entry in frontier])
         actual_ll = torch.Tensor([ entry.logLikelihood for entry in frontier])
