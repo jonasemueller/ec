@@ -4,6 +4,7 @@ import os
 import pickle
 import subprocess
 import sys
+import tempfile
 
 from dreamcoder.fragmentGrammar import FragmentGrammar
 from dreamcoder.frontier import Frontier, FrontierEntry
@@ -150,11 +151,16 @@ def ocamlInduce(g, frontiers, _=None,
         try:
             # Get relative path
             compressor_file = os.path.join(get_root_dir(), 'compression')
-            process = subprocess.Popen(compressor_file,
-                                       stdin=subprocess.PIPE,
-                                       stdout=subprocess.PIPE)
-            response, error = process.communicate(bytes(message, encoding="utf-8"))
-            response = json.loads(response.decode("utf-8"))
+            with tempfile.NamedTemporaryFile(mode='r+', encoding='utf-8') as infile, tempfile.NamedTemporaryFile(mode='r+', encoding='utf-8') as outfile:
+                infile.write(message)
+                infile.seek(0)
+                process = subprocess.Popen(compressor_file,
+                                           stdin=infile,
+                                           stdout=outfile)
+                process.wait()
+                outfile.seek(0)
+                response = json.load(outfile)
+
         except OSError as exc:
             raise exc
 
