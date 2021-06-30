@@ -10,4 +10,4 @@ function shutdown {
 }
 
 trap shutdown EXIT
-singularity exec --nv container.img python bin/aiCompetition.py  -t 3600 --topK 5 --arity 5 --maximumFrontier 5 -i 10 -R 3600 -RS 5000 --biasOptimal --contextual --mask  -r 0. 2>&1 | tee log.txt
+singularity exec --nv container.img python bin/aiCompetition.py  -t 3600 --topK 5 --arity 4 --maximumFrontier 5 -i 10 -R 3600 -RS 5000 --biasOptimal --contextual --mask  -r 0. 2>&1 | tee log.txt
