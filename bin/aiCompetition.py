@@ -109,17 +109,17 @@ if __name__ == "__main__":
                          taskData))
 
     # Task 5
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task5-train.csv')
-    taskData =  [((q, f1, f2), a1) for q, f1, f2, a1 in taskData[['q', 'f1', 'f2', 'a1']].to_numpy()]
-    train.append(makeTask("task5-train",
-                          arrow(treal, treal, treal, treal),
-                          taskData))
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task5-train.csv')
+#   taskData =  [((q, f1, f2), a1) for q, f1, f2, a1 in taskData[['q', 'f1', 'f2', 'a1']].to_numpy()]
+#   train.append(makeTask("task5-train",
+#                         arrow(treal, treal, treal, treal),
+#                         taskData))
 
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task5-test.csv')
-    taskData = [((q, f1, f2), a1) for q, f1, f2, a1 in taskData[['q', 'f1', 'f2', 'a1']].to_numpy()]
-    test.append(makeTask("task5-test",
-                         arrow(treal, treal, treal, treal),
-                         taskData))
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task5-test.csv')
+#   taskData = [((q, f1, f2), a1) for q, f1, f2, a1 in taskData[['q', 'f1', 'f2', 'a1']].to_numpy()]
+#   test.append(makeTask("task5-test",
+#                        arrow(treal, treal, treal, treal),
+#                        taskData))
 
     # Task 6
     taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task6-train.csv')
@@ -134,44 +134,44 @@ if __name__ == "__main__":
                          arrow(treal, treal, treal, treal, treal),
                          taskData))
 
-    # Task 7
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task7-train.csv')
-    taskData = [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in taskData[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
-    train.append(makeTask("task7-train",
-                          arrow(treal, treal, treal, treal, treal),
-                          taskData))
+#   # Task 7
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task7-train.csv')
+#   taskData = [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in taskData[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
+#   train.append(makeTask("task7-train",
+#                         arrow(treal, treal, treal, treal, treal),
+#                         taskData))
 
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task7-test.csv')
-    taskData = [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in taskData[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
-    test.append(makeTask("task7-test",
-                         arrow(treal, treal, treal, treal, treal),
-                         taskData))
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task7-test.csv')
+#   taskData = [((q, e12, f1, f2), a1) for q, e12, f1, f2, a1 in taskData[['q', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
+#   test.append(makeTask("task7-test",
+#                        arrow(treal, treal, treal, treal, treal),
+#                        taskData))
 
-    # Task 8
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task8-train.csv')
-    taskData = [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in taskData[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()]
-    train.append(makeTask("task8-train",
-                          arrow(treal, treal, treal, treal, treal),
-                          taskData))
+#   # Task 8
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task8-train.csv')
+#   taskData = [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in taskData[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()]
+#   train.append(makeTask("task8-train",
+#                         arrow(treal, treal, treal, treal, treal),
+#                         taskData))
 
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task8-test.csv')
-    taskData = [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in taskData[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()]
-    test.append(makeTask("task8-test",
-                         arrow(treal, treal, treal, treal, treal),
-                         taskData))
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task8-test.csv')
+#   taskData = [((q, ρ, f1, f2), a1) for q, ρ, f1, f2, a1 in taskData[['q', 'ρ', 'f1', 'f2', 'a1']].to_numpy()]
+#   test.append(makeTask("task8-test",
+#                        arrow(treal, treal, treal, treal, treal),
+#                        taskData))
 
-    # Task 9
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task9-train.csv')
-    taskData = [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in taskData[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
-    train.append(makeTask("task9-train",
-                          arrow(treal, treal, treal, treal, treal, treal),
-                          taskData))
+#   # Task 9
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task9-train.csv')
+#   taskData = [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in taskData[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
+#   train.append(makeTask("task9-train",
+#                         arrow(treal, treal, treal, treal, treal, treal),
+#                         taskData))
 
-    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task9-test.csv')
-    taskData = [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in taskData[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
-    test.append(makeTask("task9-test",
-                         arrow(treal, treal, treal, treal, treal, treal),
-                         taskData))
+#   taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task9-test.csv')
+#   taskData = [((q, ρ, e12, f1, f2), a1) for q, ρ, e12, f1, f2, a1 in taskData[['q', 'ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
+#   test.append(makeTask("task9-test",
+#                        arrow(treal, treal, treal, treal, treal, treal),
+#                        taskData))
 
     equationPrimitives = [
         # Possibly add individual ints
