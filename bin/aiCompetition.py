@@ -207,7 +207,7 @@ if __name__ == "__main__":
     explorationCompression(baseGrammar,
                            train,
                            outputPrefix="%s/aiCompetition"%outputDirectory,
-                           evaluationTimeout=1.,
+                           evaluationTimeout=0.1,
                            testingTasks=test,
                            **commandlineArguments(
                                compressor="ocaml",
@@ -215,8 +215,8 @@ if __name__ == "__main__":
                                iterations=10,
                                CPUs=numberOfCPUs(),
                                structurePenalty=0.001,
-                               helmholtzRatio=0.5,
-                               a=5,
+                               #helmholtzRatio=0.5,
+                               a=4,
                                maximumFrontier=10000,
-                               topK=2,
+                               #topK=2,
                                pseudoCounts=10.0))
