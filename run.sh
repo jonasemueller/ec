@@ -10,4 +10,16 @@ function shutdown {
 }
 
 trap shutdown EXIT
-singularity exec --nv container.img python bin/aiCompetition.py  -t 3600 --topK 5 --arity 4 --maximumFrontier 5 -i 10 -R 3600 -RS 5000 --biasOptimal --contextual --mask  -r 0. 2>&1 | tee log.txt
+
+# We use the presence of the "nvidia-container-cli" command to determine whether
+# to run Singularity with CUDA. The "nvidia-container-cli" approach doesn't
+# discover the presence of CUDA in all possible scenarios so it can also be
+# manually activated by setting the environment variable.
+if command -v nvidia-container-cli &> /dev/null
+then
+  export GPU="--nv"
+fi
+
+singularity exec ${GPU:+"$GPU"} container.img python bin/aiCompetition.py \
+  -t 3600 --topK 5 --arity 4 --maximumFrontier 5 -i 10 -R 3600 -RS 5000 \
+  --biasOptimal --contextual --mask -r 0. --compressor pypy 2>&1 | tee log.txt
