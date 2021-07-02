@@ -173,6 +173,19 @@ if __name__ == "__main__":
 #                        arrow(treal, treal, treal, treal, treal, treal),
 #                        taskData))
 
+    # Task 10
+    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task10-train.csv')
+    taskData = [((ρ, e12, f1, f2), a1) for ρ, e12, f1, f2, a1 in taskData[['ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
+    train.append(makeTask("task10-train",
+                          arrow(treal, treal, treal, treal, treal),
+                          taskData))
+
+    taskData = loadTaskDataFromFile('data/aiCompetition/aiCompetitionTasks/task10-test.csv')
+    taskData = [((ρ, e12, f1, f2), a1) for ρ, e12, f1, f2, a1 in taskData[['ρ', 'e12', 'f1', 'f2', 'a1']].to_numpy()]
+    test.append(makeTask("task10-test",
+                         arrow(treal, treal, treal, treal, treal),
+                         taskData))
+
     equationPrimitives = [
         # Possibly add individual ints
         #real,
