@@ -53,6 +53,15 @@ for n in range(2,10):
     Primitive(str(n),tint,n)
 
 f1 = Primitive("1.", treal, 1.)
-f0 = Primitive("0.", treal, 0)
+f0 = Primitive("0.", treal, 0.)
 real = Primitive("REAL", treal, None)
 fpi = Primitive("pi", treal, 3.14)
+
+f2 = Primitive("2.", treal, 2.)
+f3 = Primitive("3.", treal, 3.)
+f4 = Primitive("4.", treal, 4.)
+f5 = Primitive("5.", treal, 5.)
+f6 = Primitive("6.", treal, 6.)
+f7 = Primitive("7.", treal, 7.)
+f8 = Primitive("8.", treal, 8.)
+f9 = Primitive("9.", treal, 9.)

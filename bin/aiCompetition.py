@@ -277,7 +277,7 @@ if __name__ == "__main__":
                                featureExtractor=DummyFeatureExtractor,
                                iterations=10,
                                CPUs=numberOfCPUs(),
-                               structurePenalty=0.001,
+                               structurePenalty=0.0001,
                                #helmholtzRatio=0.5,
                                a=4,
                                maximumFrontier=10000,
