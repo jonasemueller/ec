@@ -283,6 +283,14 @@ let test_differentiation () =
 (* Integration with programs *)
 let differentiable_zero = primitive "0." treal (~$ 0.);;
 let differentiable_one = primitive "1." treal (~$ 1.);;
+let differentiable_two = primitive "2." treal (~$ 2.);;
+let differentiable_three = primitive "3." treal (~$ 3.);;
+let differentiable_four = primitive "4." treal (~$ 4.);;
+let differentiable_five = primitive "5." treal (~$ 5.);;
+let differentiable_six = primitive "6." treal (~$ 6.);;
+let differentiable_seven = primitive "7." treal (~$ 7.);;
+let differentiable_eight = primitive "8." treal (~$ 8.);;
+let differentiable_nine = primitive "9." treal (~$ 9.);;
 let differentiable_pi = primitive "pi" treal (~$ 3.14);;
 let differentiable_add = primitive "+." (treal @> treal @> treal) (+&);;
 let differentiable_subtract = primitive "-." (treal @> treal @> treal) (-&);;

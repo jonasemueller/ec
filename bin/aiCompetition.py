@@ -11,15 +11,14 @@ try:
 except ModuleNotFoundError:
     import bin.binutil  # alt import if called as module
 
-from bin.rational import RandomParameterization
 from dreamcoder.domains.arithmetic.arithmeticPrimitives import (
-    f0, f1, fpi, real_power, real_subtraction, real_addition,
+    f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, real_power, real_subtraction, real_addition,
     real_division, real_multiplication, real)
 #from dreamcoder.domains.list.listPrimitives import bootstrapTarget, bootstrapTarget_extra
 from dreamcoder.dreamcoder import explorationCompression, commandlineArguments
 from dreamcoder.grammar import Grammar
 from dreamcoder.program import Program, Primitive, Invented
-from dreamcoder.recognition import RecurrentFeatureExtractor, DummyFeatureExtractor
+from dreamcoder.recognition import RecurrentFeatureExtractor, DummyFeatureExtractor, ImageFeatureExtractor
 from dreamcoder.task import DifferentiableTask, squaredErrorLoss
 from dreamcoder.type import tint, treal, tbool, baseType, tlist, arrow
 from dreamcoder.utilities import eprint, numberOfCPUs
@@ -51,13 +50,57 @@ def makeTask(name, request, taskData):
                               #maxParameters=5,
                               loss=squaredErrorLoss)
 
+def randomCoefficient(m=5):
+    t = 0.3
+    f = t + (random.random() * (m - t))
+    if random.random() > 0.5:
+        f = -f
+    f = float("%0.1f" % f)
+    return f
+
+class RandomParameterization(object):
+    def primitive(self, e):
+        if e.name == 'REAL':
+            return Primitive(str(e), e.tp, randomCoefficient())
+        return e
+
+    def invented(self, e): return e.body.visit(self)
+
+    def abstraction(self, e): return Abstraction(e.body.visit(self))
+
+    def application(self, e):
+        return Application(e.f.visit(self), e.x.visit(self))
+
+    def index(self, e): return e
+
+RandomParameterization.single = RandomParameterization()
+
+class FeatureExtractor(ImageFeatureExtractor):
+    special = 'differentiable'
+
+    def __init__(self, tasks, testingTasks=[], cuda=False, H=64):
+        self.recomputeTasks = True
+        super(FeatureExtractor, self).__init__(inputImageDimension=64,
+                                               channels=1)
+        self.tasks = tasks
+
+    def featuresOfTask(self, t):
+        return self(t.features)
+
+    def taskOfProgram(self, p, t):
+        p = p.visit(RandomParameterization.single)
+
+        def f(x): return p.runWithArguments([x])
+        t = makeTask(str(p), f, None)
+        if t is None:
+            return None
+        t.features = drawFunction(200, 5., t.f)
+        delattr(t, 'f')
+        return t
+
 def groundTruthSolutions():
     solutions = ["(lambda (e f2 f1) (/. (-. f1 f2) e))"]
     return [Invented(Program.parseHumanReadable(s)) for s in solutions]
-
-#def select(data, parameters):
-#    data[parameters]
-#    [((f1, f2), a1) for f1, f2, a1 in taskData[['f1', 'f2', 'a1']].to_numpy()]
 
 if __name__ == "__main__":
 
@@ -191,7 +234,14 @@ if __name__ == "__main__":
         #real,
         f0,
         f1,
-        fpi,
+        f2,
+        f3,
+        f4,
+        f5,
+        f6,
+        f7,
+        f8,
+        f9,
         real_power,
         real_subtraction,
         real_addition,
