@@ -286,7 +286,7 @@ if __name__ == "__main__":
                            **commandlineArguments(
                                enumerationTimeout=3600,
                                iterations=10,
-                               compressor="rust",
+                               compressor="pypy",
                                featureExtractor=DummyFeatureExtractor,
                                CPUs=numberOfCPUs(),
                                structurePenalty=1.,
