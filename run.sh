@@ -21,4 +21,4 @@ then
 fi
 
 singularity exec ${GPU:+"$GPU"} container.img python bin/aiCompetition.py \
-  -RS 5000 --biasOptimal --contextual 2>&1 | tee log.txt
+  --biasOptimal --contextual 2>&1 | tee log.txt
